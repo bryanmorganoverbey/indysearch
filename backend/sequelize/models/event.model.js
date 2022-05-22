@@ -12,22 +12,21 @@ module.exports = (sequelize) => {
       primaryKey: true,
       type: DataTypes.INTEGER,
     },
-    type: {
+    title: {
       allowNull: false,
       type: DataTypes.STRING,
     },
-    // type: {
-    // 	allowNull: false,
-    // 	type: DataTypes.STRING,
-    // 	validate: {
-    // 		isIn: [['string', 'wind', 'percussion']]
-    // 	}
-    // },
-    purchaseDate: {
+    date: {
       allowNull: false,
       type: DataTypes.DATE,
     },
-    // We also want it to have a 'orchestraId' field, but we don't have to define it here.
-    // It will be defined automatically when Sequelize applies the associations.
+    location: {
+      allowNull: false,
+      type: DataTypes.STRING,
+    },
+    link: {
+      allowNull: false,
+      type: DataTypes.STRING,
+    },
   });
 };

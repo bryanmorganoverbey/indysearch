@@ -7,6 +7,8 @@ async function assertDatabaseConnectionOk() {
   try {
     await sequelize.authenticate();
     console.log("Database connection OK!");
+    const tables = await sequelize.showAllSchemas();
+    console.log(`Database tables: ${JSON.stringify(tables)}`);
   } catch (error) {
     console.log("Unable to connect to the database:");
     console.log(error.message);
