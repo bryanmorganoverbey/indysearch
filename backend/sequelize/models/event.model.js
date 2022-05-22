@@ -12,6 +12,16 @@ module.exports = (sequelize) => {
       primaryKey: true,
       type: DataTypes.INTEGER,
     },
+    createdAt: {
+      defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
+      allowNull: true,
+      type: DataTypes.DATE,
+    },
+    updatedAt: {
+      defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
+      allowNull: true,
+      type: DataTypes.DATE,
+    },
     title: {
       allowNull: false,
       type: DataTypes.STRING,

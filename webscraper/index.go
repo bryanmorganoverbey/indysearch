@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"io/ioutil"
 	"bytes"
   "log"
@@ -66,13 +67,17 @@ func main() {
 		title := s.Find(".list-title").Text()
 
 		// get the date
-		date := s.Find(".list-info").Text()
+		date := s.Find(".list-info").First().Text()
 
 		// get the location
-		location := s.Find(".location").Text()
+		location := s.Find(".styled").First().Text()
 
 		// get the link from the a tag in the list-title div
 		link, _ := s.Find(".list-title a").Attr("href")
+		// if link doesnt contain ".com" then append "https://www.visitindy.com" att the front of the link
+		if !strings.Contains(link, ".com") {
+			link = "https://www.visitindy.com" + link
+		}
 
 		// TODO: // if there is a link but no location, visit the link and get the location
 		// if link != "" && location == "" {
@@ -88,25 +93,29 @@ func main() {
 		// print the event
 		fmt.Printf("%s (%s) - %s - %s\n", title, date, location, link)
 
-		// insert the event into the database
-		tx, err := db.Begin()
-		if err != nil {
-			log.Fatal(err)
-		}
-		stmt, err := tx.Prepare("INSERT INTO events (title, date, location, link) VALUES ("hello", date, location, link)")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer stmt.Close()
-		_, err = stmt.Exec()
-		if err != nil {
-			log.Fatal(err)
-		}
+		// if the event contains a title, date, location, and link, insert it into the database
+		if title != "" && date != "" && location != "" && link != "" {
 
-		tx.Commit()
+			// insert the event into the database
+			tx, err := db.Begin()
+			if err != nil {
+				log.Fatal(err)
+			}
+			stmt, err := tx.Prepare(`INSERT INTO events ( title, date, location, link) VALUES ( ? , ? , ? , ?)`)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer stmt.Close()
+			_, err = stmt.Exec(title, date, location, link)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-		fmt.Println()
-		defer db.Close()
+			tx.Commit()
 
+			fmt.Println()
+		}
 	})
+	defer db.Close()
+
 }
