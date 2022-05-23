@@ -11,7 +11,7 @@ const tableHead = {
   title: "Event Name",
   date: "Date",
   location: "Location",
-  url: "Link",
+  link: "Link",
 };
 
 const EventTable = () => {
@@ -21,23 +21,26 @@ const EventTable = () => {
   const [collection, setCollection] = React.useState(
     cloneDeep(allData.slice(0, countPerPage))
   );
+  const [sortDir, setSortDir] = React.useState("");
   const searchData = React.useRef(
     throttle((val) => {
       const query = val.toLowerCase();
       setCurrentPage(1);
       const data = cloneDeep(
         allData
-          .filter((item) => item.name.toLowerCase().indexOf(query) > -1)
+          .filter((item) => item.title.toLowerCase().indexOf(query) > -1)
           .slice(0, countPerPage)
       );
       setCollection(data);
     }, 400)
   );
 
-  const sortData = React.useRef(
-    throttle((val) => {
-      setCurrentPage(1);
-      const data = cloneDeep(
+  const sortData = (val) => {
+    console.log("in sortData", sortDir);
+    setCurrentPage(1);
+    let data;
+    if (sortDir === "" || sortDir === "desc") {
+      data = cloneDeep(
         allData
           .sort((a, b) => {
             if (a[val] > b[val]) {
@@ -50,9 +53,27 @@ const EventTable = () => {
           })
           .slice(0, countPerPage)
       );
+      setSortDir("asc");
       setCollection(data);
-    }, 400)
-  );
+    }
+    if (sortDir === "asc") {
+      data = cloneDeep(
+        allData
+          .sort((a, b) => {
+            if (a[val] < b[val]) {
+              return 1;
+            }
+            if (a[val] > b[val]) {
+              return -1;
+            }
+            return 0;
+          })
+          .slice(0, countPerPage)
+      );
+      setSortDir("desc");
+      setCollection(data);
+    }
+  };
 
   React.useEffect(() => {
     if (!value) {
@@ -85,10 +106,7 @@ const EventTable = () => {
 
   const headRow = () => {
     return Object.values(tableHead).map((title, index) => (
-      <td
-        key={index}
-        onClick={() => sortData.current(Object.keys(tableHead)[index])}
-      >
+      <td key={index} onClick={() => sortData(Object.keys(tableHead)[index])}>
         <strong>{title}&#9660;</strong>
       </td>
     ));
@@ -111,7 +129,7 @@ const EventTable = () => {
       </table>
       <Pagination
         pageSize={countPerPage}
-        onChange={updatePage}
+        onChange={(p) => updatePage(p)}
         current={currentPage}
         total={allData.length}
       />

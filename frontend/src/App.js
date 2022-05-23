@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Col, Row, Card, CardHeader, CardBody } from "reactstrap";
+import axios from "axios";
 import EventTable from "./components/EventTable";
 //Build a searchable, sortable, paginated (at 5 events per page) table that lists the event name,
 //the event name, links to the specific visit indy event page, shows date and location. Also the
@@ -8,6 +9,20 @@ import EventTable from "./components/EventTable";
 //pages are switched.
 
 function App() {
+  // const url = "http://localhost:8080/api/events";
+  // const [events, setEvents] = React.useState([]);
+  // const getAllEvents = () => {
+  //   axios.get(url).then((res) => {
+  //     setEvents(res.data);
+  //   });
+  // };
+
+  // React.useEffect(() => {
+  //   getAllEvents();
+  // }, []);
+
+  // console.log(events);
+
   return (
     <Row className="align-items-center h-100">
       <Col className="col-6 mx-auto">
